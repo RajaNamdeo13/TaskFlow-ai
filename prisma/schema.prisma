@@ -1,0 +1,59 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  name         String
+  passwordHash String      @map("password_hash")
+  createdAt    DateTime    @default(now()) @map("created_at")
+  updatedAt    DateTime    @updatedAt @map("updated_at")
+  workspaces   Workspace[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id         String      @id @default(uuid())
+  name       String
+  ownerId    String      @map("owner_id")
+  owner      User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  blueprints Blueprint[]
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  @@index([ownerId])
+  @@map("workspaces")
+}
+
+model Blueprint {
+  id           String        @id @default(uuid())
+  workspaceId  String        @map("workspace_id")
+  workspace    Workspace     @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  idea         String
+  projectName  String        @map("project_name")
+  payload      Json
+  exportEvents ExportEvent[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+  updatedAt    DateTime      @updatedAt @map("updated_at")
+
+  @@index([workspaceId, createdAt])
+  @@map("blueprints")
+}
+
+model ExportEvent {
+  id          String    @id @default(uuid())
+  blueprintId String    @map("blueprint_id")
+  blueprint   Blueprint @relation(fields: [blueprintId], references: [id], onDelete: Cascade)
+  format      String
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@index([blueprintId])
+  @@map("export_events")
+}

@@ -1,0 +1,93 @@
+.markdown-preview h1 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  color: var(--color-paper-100);
+}
+.markdown-preview h2 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-paper-100);
+}
+.markdown-preview h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-paper-100);
+}
+.markdown-preview p {
+  color: var(--color-paper-300);
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+.markdown-preview ul, .markdown-preview ol {
+  color: var(--color-paper-300);
+  margin-bottom: 0.75rem;
+  padding-left: 1.25rem;
+  font-size: 0.9rem;
+}
+.markdown-preview li {
+  margin-bottom: 0.35rem;
+  line-height: 1.6;
+}
+.markdown-preview code {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  background: var(--color-ink-800);
+  color: var(--color-line-400);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+.markdown-preview pre {
+  background: var(--color-ink-800);
+  border: 1px solid rgba(124, 158, 255, 0.12);
+  border-radius: 10px;
+  padding: 1rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+.markdown-preview pre code {
+  background: none;
+  padding: 0;
+  color: var(--color-paper-100);
+}
+.markdown-preview a {
+  color: var(--color-signal-400);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.markdown-preview hr {
+  border-color: rgba(255, 255, 255, 0.08);
+  margin: 1.5rem 0;
+}
+.markdown-preview blockquote {
+  border-left: 2px solid var(--color-signal-500);
+  padding-left: 1rem;
+  color: var(--color-paper-500);
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
+.markdown-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+.markdown-preview th, .markdown-preview td {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.markdown-preview th {
+  color: var(--color-paper-100);
+  background: var(--color-ink-800);
+}
+.markdown-preview td {
+  color: var(--color-paper-300);
+}

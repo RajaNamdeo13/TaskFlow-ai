@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --color-ink-950: #05070a;
+  --color-ink-900: #0a0d13;
+  --color-ink-800: #12161f;
+  --color-ink-700: #1b202c;
+  --color-ink-600: #262c3a;
+
+  --color-signal-400: #7c9eff;
+  --color-signal-500: #5b7fff;
+  --color-signal-600: #4361ee;
+
+  --color-line-400: #35e0c9;
+  --color-line-500: #1fd1b8;
+
+  --color-paper-100: #e8ecf5;
+  --color-paper-300: #aab2c5;
+  --color-paper-500: #6b7386;
+}
+
+body {
+  background-color: var(--color-ink-950);
+  color: var(--color-paper-100);
+  font-family: var(--font-body);
+}
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(124, 158, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 158, 255, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.blueprint-grid-fine {
+  background-image:
+    linear-gradient(rgba(124, 158, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124, 158, 255, 0.04) 1px, transparent 1px);
+  background-size: 8px 8px;
+}
+
+.blueprint-corners {
+  position: relative;
+}
+.blueprint-corners::before,
+.blueprint-corners::after {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-color: var(--color-line-500);
+  opacity: 0.6;
+}
+.blueprint-corners::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+.blueprint-corners::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.025);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(124, 158, 255, 0.12);
+  border-radius: 14px;
+}
+
+.glass-panel-hover {
+  transition: all 0.25s ease;
+}
+.glass-panel-hover:hover {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: rgba(124, 158, 255, 0.25);
+}
+
+.text-gradient {
+  background: linear-gradient(90deg, var(--color-signal-400), var(--color-line-400));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.btn-primary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--color-signal-600), var(--color-signal-500));
+  color: white;
+  font-weight: 500;
+  box-shadow: 0 8px 24px -8px rgba(91, 127, 255, 0.5);
+  transition: all 0.2s ease;
+}
+.btn-primary:hover {
+  box-shadow: 0 12px 28px -8px rgba(91, 127, 255, 0.65);
+  transform: translateY(-1px);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(124, 158, 255, 0.2);
+  color: var(--color-paper-100);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(124, 158, 255, 0.4);
+}
+
+::selection {
+  background: rgba(91, 127, 255, 0.3);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-600) transparent;
+}
