@@ -10,7 +10,7 @@
     "types": ["node"],
     "skipLibCheck": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": false
   },
   "include": ["src/**/*.ts", "../src/types/**/*.ts"]
 }
