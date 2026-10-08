@@ -1,0 +1,20 @@
+import { Router } from "express";
+import { z } from "zod";
+import { prisma } from "../db/prisma.ts";
+import { requireAuth } from "../middleware/auth.ts";
+import { generateBlueprint } from "../services/blueprintService.ts";
+import { toJson, toReadme, toSql } from "../services/blueprintExports.ts";
+import { HttpError } from "../utils/httpError.ts";
+
+const router = Router();
+const ideaSchema = z.object({ idea: z.string().trim().min(12, "Describe the product idea in at least 12 characters.").max(2000) });
+const sourceEnum = { gemini: "GEMINI", demo: "DEMO" } as const;
+function serialize(row: { id: string; idea: string; projectName: string; payload: unknown; source: string; createdAt: Date; updatedAt: Date }) { return { id: row.id, idea: row.idea, projectName: row.projectName, blueprint: row.payload, source: row.source.toLowerCase(), createdAt: row.createdAt.toISOString(), updatedAt: row.updatedAt.toISOString() }; }
+router.use(requireAuth);
+router.post("/generate", async (req, res) => { const { idea } = ideaSchema.parse(req.body); const result = await generateBlueprint({ idea }); const saved = await prisma.blueprint.create({ data: { workspaceId: req.auth!.workspaceId, idea, projectName: result.blueprint.projectName, payload: { ...result.blueprint, trace: result.trace } as any, source: sourceEnum[result.source] } }); await prisma.workspace.update({ where: { id: req.auth!.workspaceId }, data: { updatedAt: new Date() } }); res.status(201).json({ ...serialize(saved), trace: result.trace }); });
+router.get("/", async (req, res) => { const search = typeof req.query.search === "string" ? req.query.search.trim() : ""; const rows = await prisma.blueprint.findMany({ where: { workspaceId: req.auth!.workspaceId, ...(search ? { OR: [{ projectName: { contains: search, mode: "insensitive" } }, { idea: { contains: search, mode: "insensitive" } }] } : {}) }, orderBy: { createdAt: "desc" }, take: 100 }); res.json({ blueprints: rows.map(serialize) }); });
+router.get("/stats", async (req, res) => { const rows = await prisma.blueprint.findMany({ where: { workspaceId: req.auth!.workspaceId }, select: { payload: true, createdAt: true } }); const week = Date.now() - 7 * 86400000; const count = (payload: unknown, key: string) => Array.isArray((payload as Record<string, unknown>)[key]) ? ((payload as Record<string, unknown>)[key] as unknown[]).length : 0; res.json({ totalBlueprints: rows.length, totalApiEndpoints: rows.reduce((sum, row) => sum + count(row.payload, "apiDesign"), 0), totalDbTables: rows.reduce((sum, row) => sum + count(row.payload, "databaseSchema"), 0), totalTasks: rows.reduce((sum, row) => sum + count(row.payload, "tasks"), 0), generatedThisWeek: rows.filter(row => row.createdAt.getTime() >= week).length }); });
+router.get("/:id", async (req, res) => { const row = await prisma.blueprint.findFirst({ where: { id: req.params.id, workspaceId: req.auth!.workspaceId } }); if (!row) throw new HttpError(404, "Blueprint not found."); res.json(serialize(row)); });
+router.delete("/:id", async (req, res) => { const result = await prisma.blueprint.deleteMany({ where: { id: req.params.id, workspaceId: req.auth!.workspaceId } }); if (!result.count) throw new HttpError(404, "Blueprint not found."); res.status(204).end(); });
+router.get("/:id/export/:format", async (req, res) => { const format = z.enum(["json", "readme", "sql"]).parse(req.params.format); const row = await prisma.blueprint.findFirst({ where: { id: req.params.id, workspaceId: req.auth!.workspaceId } }); if (!row) throw new HttpError(404, "Blueprint not found."); const blueprint = row.payload as any; const content = format === "json" ? toJson(blueprint) : format === "sql" ? toSql(blueprint) : toReadme(blueprint); await prisma.exportEvent.create({ data: { blueprintId: row.id, format } }); res.setHeader("Content-Type", format === "json" ? "application/json" : "text/plain; charset=utf-8"); res.setHeader("Content-Disposition", `attachment; filename="${row.projectName.replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.${format === "readme" ? "md" : format}"`); res.send(content); });
+export { router as blueprintRouter };
